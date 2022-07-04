@@ -1,20 +1,24 @@
+<script type="module">
+  import XeTeXEngine from "./XeTeXEngine.mjs"
 
-<script src='XeTeXEngine.js'></script>
-<script>
+  async function testFormat() {
+    const Engine = new XeTeXEngine();
+    await Engine.loadEngine();
+    await Engine.compileFormat();
+  }
 
-var globalEn = new XeTeXEngine();
-globalEn.loadEngine();
+  async function testTeX() {
+    let texR = await fetch('test.tex');
+    let tex = await texR.text();
 
-async function testFormat() {
-	await globalEn.compileFormat();
-}
+    const Engine = new XeTeXEngine();
+    await Engine.loadEngine();
+    await Engine.writeMemFSFile("main.tex", tex);
+    await Engine.setEngineMainFile("main.tex");
+    let r = await Engine.compileLaTeX();
+    console.log(r);
+  }
 
-async function testTeX() {
-	let texR = await fetch('test.tex');
-	let tex = await texR.text();
-	globalEn.writeMemFSFile("main.tex", tex);
-	globalEn.setEngineMainFile("main.tex");
-	let r = await globalEn.compileLaTeX();
-	console.log(r);
-} 	
+  window.testTeX = testTeX;
+  window.testFormat = testFormat;
 </script>
