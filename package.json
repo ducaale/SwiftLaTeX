@@ -1,0 +1,15 @@
+{
+  "name": "ducaale-test-swiftlatex",
+  "version": "1.0.0",
+  "license": "AGPL-3.0",
+  "exports": {
+    "./xetex": "./xetex.wasm/XeTeXEngine.mjs"
+  },
+  "files": [
+    "xetex.wasm/XeTeXEngine.mjs",
+    "xetex.wasm/swiftlatexxetex.js",
+    "xetex.wasm/swiftlatexxetex.wasm"
+  ],
+  "dependencies": {},
+  "devDependencies": {}
+}

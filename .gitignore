@@ -7,3 +7,5 @@ swiftlatexdvipdfm.js
 swiftlatexdvipdfm.wasm
 *.Identifier
 .texlive_tmp
+package-lock.json
+*.tgz
