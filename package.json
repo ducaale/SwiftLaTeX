@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "license": "AGPL-3.0",
   "exports": {
-    "./xetex": "./xetex.wasm/XeTeXEngine.mjs"
+    "./xetex": "./xetex.wasm/XeTeXEngine.mjs",
+    "./pdftex": "./pdftex.wasm/PdfTeXEngine.mjs"
   },
   "files": [
     "xetex.wasm/XeTeXEngine.mjs",
     "xetex.wasm/swiftlatexxetex.js",
-    "xetex.wasm/swiftlatexxetex.wasm"
+    "xetex.wasm/swiftlatexxetex.wasm",
+    "pdftex.wasm/PdfTeXEngine.mjs",
+    "pdftex.wasm/swiftlatexpdftex.js",
+    "pdftex.wasm/swiftlatexpdftex.wasm"
   ],
   "dependencies": {},
   "devDependencies": {}
