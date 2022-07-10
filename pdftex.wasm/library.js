@@ -6,4 +6,3 @@ mergeInto(LibraryManager.library, {
     return kpse_find_pk_impl(nameptr, dpi);
   }
 });
-
