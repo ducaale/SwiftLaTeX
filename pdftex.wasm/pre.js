@@ -30,6 +30,12 @@ var Module = {
   }
 };
 
+function _allocate(content) {
+    let res = _malloc(content.length);
+    HEAPU8.set(new Uint8Array(content), res);
+    return res; 
+}
+
 function dumpHeapMemory() {
   var src = wasmMemory.buffer;
   var dst = new Uint8Array(src.byteLength);
@@ -191,18 +197,18 @@ function kpse_find_file_impl(nameptr, format, _mustexist) {
   const reqname = UTF8ToString(nameptr);
 
   if (reqname.includes("/")) {
-    return 0;
+      return 0;
   }
 
   const cacheKey = format + "/" + reqname;
 
   if (cacheKey in texlive404_cache) {
-    return 0;
+      return 0;
   }
 
   if (cacheKey in texlive200_cache) {
-    const savepath = texlive200_cache[cacheKey];
-    return allocate(intArrayFromString(savepath), ALLOC_NORMAL);
+      const savepath = texlive200_cache[cacheKey];
+      return _allocate(intArrayFromString(savepath));
   }
 
   const remote_url = self.texlive_endpoint + 'pdftex/' + cacheKey;
@@ -212,25 +218,25 @@ function kpse_find_file_impl(nameptr, format, _mustexist) {
   xhr.responseType = "arraybuffer";
   console.log("Start downloading texlive file " + remote_url);
   try {
-    xhr.send();
+      xhr.send();
   } catch (err) {
-    console.log("TexLive Download Failed " + remote_url);
-    return 0;
+      console.log("TexLive Download Failed " + remote_url);
+      return 0;
   }
 
   if (xhr.status === 200) {
-    let arraybuffer = xhr.response;
-    const fileid = xhr.getResponseHeader('fileid');
-    const savepath = TEXCACHEROOT + "/" + fileid;
-    FS.writeFile(savepath, new Uint8Array(arraybuffer));
-    texlive200_cache[cacheKey] = savepath;
-    return allocate(intArrayFromString(savepath), ALLOC_NORMAL);
+      let arraybuffer = xhr.response;
+      const fileid = xhr.getResponseHeader('fileid');
+      const savepath = TEXCACHEROOT + "/" + fileid;
+      FS.writeFile(savepath, new Uint8Array(arraybuffer));
+      texlive200_cache[cacheKey] = savepath;
+      return _allocate(intArrayFromString(savepath));
 
   } else if (xhr.status === 301) {
-    console.log("TexLive File not exists " + remote_url);
-    texlive404_cache[cacheKey] = 1;
-    return 0;
-  }
+      console.log("TexLive File not exists " + remote_url);
+      texlive404_cache[cacheKey] = 1;
+      return 0;
+  } 
   return 0;
 }
 
@@ -252,7 +258,7 @@ function kpse_find_pk_impl(nameptr, dpi) {
 
     if (cacheKey in pk200_cache) {
         const savepath = pk200_cache[cacheKey];
-        return allocate(intArrayFromString(savepath), ALLOC_NORMAL);
+        return _allocate(intArrayFromString(savepath));
     }
 
     const remote_url = self.texlive_endpoint + 'pdftex/pk/' + cacheKey;
@@ -274,7 +280,7 @@ function kpse_find_pk_impl(nameptr, dpi) {
         const savepath = TEXCACHEROOT + "/" + pkid;
         FS.writeFile(savepath, new Uint8Array(arraybuffer));
         pk200_cache[cacheKey] = savepath;
-        return allocate(intArrayFromString(savepath), ALLOC_NORMAL);
+        return _allocate(intArrayFromString(savepath));
 
     } else if (xhr.status === 301) {
         console.log("TexLive File not exists " + remote_url);

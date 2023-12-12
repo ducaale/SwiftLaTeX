@@ -9,3 +9,4 @@ swiftlatexdvipdfm.wasm
 .texlive_tmp
 package-lock.json
 *.tgz
+.DS_Store
