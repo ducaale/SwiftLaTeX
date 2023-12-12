@@ -1,16 +1,15 @@
 {
-  "name": "ducaale-test-swiftlatex",
+  "name": "swiftlatex",
   "version": "1.0.0",
   "license": "AGPL-3.0",
-  "exports": {
-    "./xetex": "./xetex.wasm/XeTeXEngine.mjs",
-    "./pdftex": "./pdftex.wasm/PdfTeXEngine.mjs"
-  },
+  "type": "module",
+  "exports": "./index.js",
   "files": [
-    "xetex.wasm/XeTeXEngine.mjs",
+    "index.js",
     "xetex.wasm/swiftlatexxetex.js",
     "xetex.wasm/swiftlatexxetex.wasm",
-    "pdftex.wasm/PdfTeXEngine.mjs",
+    "dvipdfm.wasm/swiftlatexdvipdfm.js",
+    "dvipdfm.wasm/swiftlatexdvipdfm.wasm",
     "pdftex.wasm/swiftlatexpdftex.js",
     "pdftex.wasm/swiftlatexpdftex.wasm"
   ],
