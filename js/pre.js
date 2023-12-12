@@ -6,7 +6,8 @@ const WORKROOT = "/work";
 self.memlog = "";
 self.initmem = undefined;
 self.mainfile = "main.tex";
-self.texlive_endpoint = "https://texlive2.swiftlatex.com/";
+self.texlive_endpoint = undefined;
+self.extension = undefined
 
 var Module = {
   print(a) {
@@ -111,7 +112,7 @@ function compileLaTeXRoutine() {
   if (status === 0) {
     let pdfArrayBuffer = null;
     _compileBibtex();
-    let pdfurl = WORKROOT + "/" + self.mainfile.substr(0, self.mainfile.length - 4) + ".xdv";
+    let pdfurl = WORKROOT + "/" + self.mainfile.substr(0, self.mainfile.length - 4) + self.extension;
     try {
       pdfArrayBuffer = FS.readFile(pdfurl, {
         encoding: 'binary'
@@ -128,60 +129,46 @@ function compileLaTeXRoutine() {
   }
 }
 
-function compileFormatRoutine() {
+function compilePDFRoutine() {
   prepareExecutionContext();
-  let status = _compileFormat();
+  const setMainFunction = cwrap('setMainEntry', 'number', ['string']);
+  setMainFunction(self.mainfile);
+
+  let status = _compilePDF();
   if (status === 0) {
     let pdfArrayBuffer = null;
+    let pdfurl = WORKROOT + "/" + self.mainfile.substr(0, self.mainfile.length - 4) + ".pdf"
     try {
-      let pdfurl = WORKROOT + "/xelatex.fmt";
       pdfArrayBuffer = FS.readFile(pdfurl, {
         encoding: 'binary'
       });
     } catch (err) {
-      console.error("Fetch content failed.");
+      console.error("Fetch content failed. ", + pdfurl);
       console.error("full log", self.memlog);
+      return;
     }
-    return {
-      'result': 'ok',
-      'status': status,
-      'log': self.memlog,
-      'pdf': pdfArrayBuffer.buffer,
-      'cmd': 'compile'
-    };
+    return { status, log: self.memlog, pdf: pdfArrayBuffer.buffer };
   } else {
-    console.error("Compilation format failed, with status code " + status);
+    console.error("Compilation failed, with status code " + status);
     console.error("full log", self.memlog);
-  }
-}
-
-function mkdirRoutine(dirname) {
-  try {
-    FS.mkdir(WORKROOT + "/" + dirname);
-  } catch (err) {
-    console.error("Not able to mkdir " + dirname);
-  }
-}
-
-function writeFileRoutine(filename, content) {
-  FS.writeFile(WORKROOT + "/" + filename, content);
-}
-
-function setTexliveEndpoint(url) {
-  if (url) {
-    if (!url.endsWith("/")) {
-      url += '/';
-    }
-    self.texlive_endpoint = url;
   }
 }
 
 Comlink.expose({
   compileLaTeXRoutine,
-  compileFormatRoutine,
-  setTexliveEndpoint,
-  mkdirRoutine,
-  writeFileRoutine,
+  compilePDFRoutine,
+  mkdirRoutine(dirname) {
+    FS.mkdir(WORKROOT + "/" + dirname);
+  },
+  writeFileRoutine(filename, content) {
+    FS.writeFile(WORKROOT + "/" + filename, content);
+  },
+  setTexliveEndpoint(url) {
+    self.texlive_endpoint = url;
+  },
+  setExtension(extension) {
+    self.extension = extension;
+  },
   setMainFile(url) {
     self.mainfile = url;
   },
@@ -193,8 +180,14 @@ Comlink.expose({
 let texlive404_cache = {};
 let texlive200_cache = {};
 
-function kpse_find_file_impl(nameptr, format, _mustexist) {
-  const reqname = UTF8ToString(nameptr);
+function kpse_find_file_impl(nameptr, format) {
+  let reqname = UTF8ToString(nameptr);
+
+  // It is a hack , since webassembly version latex engine stores 
+  // all templates file inside /tex/, therefore, we have to fetch it again
+  if (reqname.startsWith("/tex/")) {
+    reqname = reqname.substr(5);
+  }
 
   if (reqname.includes("/")) {
     return 0;
@@ -211,7 +204,7 @@ function kpse_find_file_impl(nameptr, format, _mustexist) {
     return _allocate(intArrayFromString(savepath));
   }
 
-  const remote_url = self.texlive_endpoint + 'xetex/' + cacheKey;
+  const remote_url = self.texlive_endpoint + cacheKey;
   let xhr = new XMLHttpRequest();
   xhr.open("GET", remote_url, false);
   xhr.timeout = 150000;
@@ -239,3 +232,5 @@ function kpse_find_file_impl(nameptr, format, _mustexist) {
   }
   return 0;
 }
+
+// TODO: implement kpse_find_pk_impl
