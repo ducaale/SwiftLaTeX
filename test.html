@@ -1,0 +1,56 @@
+<script type="module">
+  import {XeTeXEngine, PdfTeXEngine, DvipdfmxEngine} from "./index.mjs"
+
+  async function testTeX() {
+    let tex = `
+      \\documentclass{article}
+      \\usepackage{graphicx}
+
+      \\begin{document}
+
+      \\title{Introduction to \\LaTeX{}}
+      \\author{Author's Name}
+
+      \\maketitle
+
+      \\begin{abstract}
+      The abstract text goes here.
+      \\end{abstract}
+
+      \\section{Introduction}
+      Here is the text of your introduction.
+
+      \\begin{equation}
+          \\label{simple_equation}
+          \\alpha = \\sqrt{ \\beta }
+      \\end{equation}
+
+      \\subsection{Subsection Heading Here}
+      Write your subsection text here.
+
+
+      \\section{Conclusion}
+      Write your conclusion here.
+
+      \\end{document}
+    `
+
+    const engine1 = new XeTeXEngine();
+    await engine1.loadEngine();
+    await engine1.writeMemFSFile("main.tex", tex);
+    await engine1.setEngineMainFile("main.tex");
+    let result1 = await engine1.compileLaTeX();
+
+    const engine = new DvipdfmxEngine();
+    await engine.loadEngine();
+    await engine.writeMemFSFile("main.xdv", result1.pdf);
+    await engine.setEngineMainFile("main.xdv");
+    let result = await engine.compilePDF();
+
+    let file = new Blob([result.pdf], {type: 'application/pdf'});
+    var fileURL = URL.createObjectURL(file);
+    window.open(fileURL);
+  }
+
+  window.testTeX = testTeX;
+</script>
