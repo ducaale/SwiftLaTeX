@@ -1,4 +1,4 @@
-importScripts("https://unpkg.com/comlink/dist/umd/comlink.js");
+const Comlink = require('comlink')
 
 const TEXCACHEROOT = "/tex";
 const WORKROOT = "/work";

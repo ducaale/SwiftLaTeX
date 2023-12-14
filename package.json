@@ -3,16 +3,19 @@
   "version": "1.0.0",
   "license": "AGPL-3.0",
   "type": "module",
-  "exports": "./index.js",
-  "files": [
-    "index.js",
-    "xetex.wasm/swiftlatexxetex.js",
-    "xetex.wasm/swiftlatexxetex.wasm",
-    "dvipdfm.wasm/swiftlatexdvipdfm.js",
-    "dvipdfm.wasm/swiftlatexdvipdfm.wasm",
-    "pdftex.wasm/swiftlatexpdftex.js",
-    "pdftex.wasm/swiftlatexpdftex.wasm"
-  ],
-  "dependencies": {},
-  "devDependencies": {}
+  "scripts": {
+    "build:native": "cd native && make clean && make all",
+    "build:js": "rollup -c",
+    "build": "npm run build:native && npm run build:js"
+  },
+  "dependencies": {
+    "comlink": "^4.3.1"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^2.75.6",
+    "rollup-plugin-copy": "^3.5.0"
+  }
 }

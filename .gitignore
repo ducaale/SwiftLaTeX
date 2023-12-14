@@ -10,3 +10,5 @@ swiftlatexdvipdfm.wasm
 package-lock.json
 *.tgz
 .DS_Store
+dist
+node_modules
