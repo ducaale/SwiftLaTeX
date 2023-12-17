@@ -13,9 +13,9 @@ class LaTeXEngine {
   latexWorkerStatus = EngineStatus.Init;
 
   constructor({extension, endpoint, workerPath}) {
-    self.extension = extension
-    self.endpoint = endpoint
-    self.workerPath = workerPath
+    this.extension = extension
+    this.endpoint = endpoint
+    this.workerPath = workerPath
   }
 
   async loadEngine() {
@@ -25,7 +25,7 @@ class LaTeXEngine {
 
     this.latexWorkerStatus = EngineStatus.Init;
 
-    this.latexWorker = new Worker(self.workerPath);
+    this.latexWorker = new Worker(this.workerPath);
     await new Promise((resolve) => {
       this.latexWorker.onmessage = (event) => {
         if (event.data === 'wasm_initialized') { resolve(); }
@@ -33,8 +33,8 @@ class LaTeXEngine {
     });
 
     this.latexWorkerProxy = Comlink.wrap(this.latexWorker);
-    await this.latexWorkerProxy.setExtension(self.extension);
-    await this.latexWorkerProxy.setTexliveEndpoint(self.endpoint);
+    await this.latexWorkerProxy.setExtension(this.extension);
+    await this.latexWorkerProxy.setTexliveEndpoint(this.endpoint);
 
     this.latexWorkerStatus = EngineStatus.Ready;
   }
