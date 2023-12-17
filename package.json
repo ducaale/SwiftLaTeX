@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "license": "AGPL-3.0",
   "type": "module",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build:native": "cd native && make clean && make all",
     "build:js": "rollup -c",
