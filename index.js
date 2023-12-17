@@ -129,7 +129,7 @@ export class XeTeXEngine extends LaTeXEngine {
     super({
       extension: '.xdv',
       endpoint: 'https://texlive2.swiftlatex.com/xetex/',
-      workerPath: 'xetex.wasm/swiftlatexxetex.js'
+      workerPath: 'swiftlatexxetex.js'
     })
   }
 }
@@ -139,7 +139,7 @@ export class DvipdfmxEngine extends LaTeXEngine {
     super({
       extension: '.pdf',
       endpoint: 'https://texlive2.swiftlatex.com/xetex/',
-      workerPath: 'dvipdfm.wasm/swiftlatexdvipdfm.js'
+      workerPath: 'swiftlatexdvipdfm.js'
     })
   }
 }
@@ -149,7 +149,7 @@ export class PdfTeXEngine extends LaTeXEngine {
     super({
       extension: '.pdf',
       endpoint: 'https://texlive2.swiftlatex.com/pdftex/',
-      workerPath: 'pdftex.wasm/swiftlatexpdftex.js'
+      workerPath: 'swiftlatexpdftex.js'
     })
   }
 }
