@@ -12,7 +12,7 @@ const workers = [
 export default [
   ...workers.map((input) => ({
     input,
-    output: { dir: 'dist', format: 'esm' },
+    output: { dir: 'dist', format: 'umd', name: input },
     plugins: [ nodeResolve(), commonjs(), terser() ]
   })),
   {
